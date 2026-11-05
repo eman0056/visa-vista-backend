@@ -1,0 +1,9 @@
+node_modules
+.env
+seed/.dist
+.venv/
+__pycache__/
+.pytest_cache/
+*.py[cod]
+.vercel
+.env*
