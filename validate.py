@@ -42,10 +42,9 @@ def validate(llm_out, lines, case_ref, ms=None):
         add("other", "medium", f"Low classification confidence ({conf:.2f}).")
 
     # 2. Scan quality (MRZ lines ignored)
-    low = [l for l in lines if l["confidence"] < 0.85 and "<" not in l["text"]]
-    if low:
-        add("low_scan_quality", "high" if len(low) >= 3 else "medium",
-            f"{len(low)} OCR line(s) below 85% confidence.")
+    # OpenAI Vision does not provide genuine OCR line confidence scores.
+    # Do not fabricate scan-quality scores.
+    low = []
 
     # 3. Passport MRZ check digits
     mrz = {"checked": False, "results": []}
@@ -100,7 +99,7 @@ def validate(llm_out, lines, case_ref, ms=None):
         "fields": fields,
         "mrz_check": mrz,
         "flags": flags,
-        "ocr": {"source": "paddleocr", "avg_confidence": avg,
-                "low_confidence_lines": len(low), "processing_time_ms": ms},
+        "ocr": {"source": "openai_vision", "avg_confidence": None,
+                "low_confidence_lines": None, "processing_time_ms": ms},
         "extracted_at": datetime.now(timezone.utc).isoformat(),
     }
