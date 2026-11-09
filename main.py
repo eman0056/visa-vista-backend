@@ -1,4 +1,5 @@
 import base64
+import io
 import json
 import logging
 import math
@@ -10,6 +11,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Literal
 from urllib.parse import quote
+
+import pypdf
 
 import httpx
 from dotenv import load_dotenv
@@ -364,6 +367,17 @@ def ask_vision(data: bytes, mime: str, filename: str, instructions: str,
     return output
 
 
+def _count_pages(data: bytes, mime: str) -> int:
+    """Return the number of pages in a document (1 for images)."""
+    if mime != "application/pdf":
+        return 1
+    try:
+        reader = pypdf.PdfReader(io.BytesIO(data))
+        return max(len(reader.pages), 1)
+    except Exception:
+        return 1
+
+
 @app.get("/health")
 async def health():
     return {"status": "ok"}
@@ -537,13 +551,15 @@ async def intake(
         "received_at": now,
         "storage_path": storage_path,
     }
+    page_count = _count_pages(data, mime)
     pages = [
         {
             "document_id": document_id,
-            "page_number": 1,
-            "label": request.filename,
+            "page_number": page_num,
+            "label": f"{request.filename} — page {page_num}" if page_count > 1 else request.filename,
             "image_path": storage_path,
         }
+        for page_num in range(1, page_count + 1)
     ]
     async with httpx.AsyncClient(timeout=timeout) as client:
         await save_ocr_results(client, url, key, document, pages, fields, flags)

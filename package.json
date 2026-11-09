@@ -1,0 +1,15 @@
+{
+  "name": "visa-vista-backend",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "seed": "esbuild seed/seed.ts --bundle --platform=node --format=esm --packages=external --loader:.jpg=file --asset-names='[name]' --outdir=seed/.dist && node seed/.dist/seed.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.118.0",
+    "dotenv": "^18.0.9"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.2"
+  }
+}
