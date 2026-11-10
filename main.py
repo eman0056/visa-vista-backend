@@ -438,7 +438,7 @@ async def intake(
             async with client.stream(
                 "GET",
                 f"{url}/storage/v1/object/{BUCKET}/{path}",
-                headers={"apikey": key, "Authorization": f"Bearer {key}"},
+                headers={"apikey": key},
             ) as response:
                 if response.status_code != 200:
                     raise HTTPException(404, "The uploaded document could not be found.")
