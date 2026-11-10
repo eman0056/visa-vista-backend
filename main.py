@@ -355,10 +355,15 @@ def ask_vision(data: bytes, mime: str, filename: str, instructions: str,
     try:
         response = llm.responses.create(**kwargs)
     except Exception as exc:
-        logger.error("OpenAI Vision request failed (%s).", type(exc).__name__)
+        logger.error(
+            "OpenAI Vision request failed (%s): %s",
+            type(exc).__name__,
+            str(exc),
+        )
         raise HTTPException(
             502, "Document analysis failed. Please retry or contact support."
         ) from exc
+
 
     output = response.output_text
     if not output or not output.strip():
