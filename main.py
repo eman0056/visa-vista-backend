@@ -338,7 +338,8 @@ def ask_vision(data: bytes, mime: str, filename: str, instructions: str,
             "type": "input_text",
             "text": (
                 "Analyze this uploaded immigration document. "
-                "Extract only information supported by the document."
+                "Extract only information supported by the document. "
+                "Please respond with a JSON object."
             ),
         },
     ]
