@@ -473,6 +473,8 @@ async def intake(
             f"\n\nThe user selected {request.document_type} as a type hint. "
             "Verify it against the document; do not use it if the document differs."
         )
+    # Ensure the model knows we want a JSON response (word "JSON" required by the API)
+    instructions += "\n\nPlease respond with a JSON object."
     raw_output = await run_in_threadpool(
         ask_vision, data, mime, filename, instructions, True
     )
